@@ -5,19 +5,32 @@ $(function() {
         var questionTemplate = $('.questions-template').clone();
         var questionPref = questionTemplate.find('h2').text(questions[i].content);
         $('form').append(questionPref);
-        $('form').append('<input type="radio" name="choice' + [i] + '"value="Yes">Yes');
-        $('form').append('<input type="radio" name="choice' + [i] + '"value="No">No');
+        $('form').append('<input type="radio" name="' + questions[i].preference + '"value="Yes">Yes');
+        $('form').append('<input type="radio" name="' + questions[i].preference + '"value="No">No');
     }
     $('.answers').append("<br><button type='submit'>Submit</button");
+    $('.answers').append("<button id='remove'>Clear</button>")
     $('.answers').submit(function(e) {
         e.preventDefault();
-        var answer = [$(this).find("input[name='choice0']:checked").val(),
-            $(this).find("input[name='choice1']:checked").val(),
-            $(this).find("input[name='choice2']:checked").val(),
-            $(this).find("input[name='choice3']:checked").val(),
-            $(this).find("input[name='choice4']:checked").val()
-        ];
-        console.log(answer);
+        var pref = {
+            'strong': $(this).find("input[name='strong']:checked").val() == "Yes",
+            'salty': $(this).find("input[name='salty']:checked").val() == "Yes",
+            'bitter': $(this).find("input[name='bitter']:checked").val() == "Yes",
+            'sweet': $(this).find("input[name='sweet']:checked").val() == "Yes",
+            'fruity': $(this).find("input[name='fruity']:checked").val() == "Yes"
+        }
+        var nikko = new Bartender(questions, nikkoPantry);
+        var randomDrink = nikko.createDrink(pref);
+        for (var i = 0; i < randomDrink.length; i++) {
+            console.log(randomDrink[i].stuff);
+            $('.userDrink ul').append('<li>' + randomDrink[i].stuff + 
+            	'</li>');
+        }  
+    })
+    $('#remove').on('click', function(e){
+        e.preventDefault();
+        $('.userDrink li').remove();
+        console.log()
     })
 })
 
@@ -40,9 +53,32 @@ function Pantry(ingredients) {
 function Bartender(questions, pantry) {
     this.questions = questions;
     this.pantry = pantry;
-    this.createDrink = function() {}
 }
 
+Bartender.prototype.createDrink = function(prefAnswer) {
+    // this.prefAnswer = prefAnswer;
+    var drink = [];
+    // 1. check the preferences (answers)
+    // 2. if the answer is yes we'll go to the corresponding preference and pick a random ingredient
+    // 3. if the answer is no, move on to the next answer
+    for (var key in prefAnswer) {
+        if (prefAnswer[key]) {
+            var matchedIngredients = []
+            for (var i = 0; i < this.pantry.ingredients.length; i++) {
+                if (this.pantry.ingredients[i].preference == key) {
+                    matchedIngredients.push(this.pantry.ingredients[i]);
+                }
+            }
+            var num = randomNum(0, 2);
+            // process here.
+            drink.push(matchedIngredients[num]);
+            // pick == a random ingredient; from where??
+            // how?
+
+        }
+    }
+    return drink;
+}
 
 /// Use the objects above
 
@@ -55,11 +91,11 @@ var questions = [new Question('Do ye like yer drinks strong?', 'strong'),
     ]
     // indgredients with preference
 var ingredients = [new Ingredient('Glug of rum', 'strong'),
-    new Ingredient('slug of whisky', 'strong'),
-    new Ingredient('splash of gin', 'strong'),
+    new Ingredient('Slug of whisky', 'strong'),
+    new Ingredient('Splash of gin', 'strong'),
     new Ingredient('Olive on a stick', 'salty'),
-    new Ingredient('salt-dusted rim', 'salty'),
-    new Ingredient('rasher of bacon', 'salty'),
+    new Ingredient('Salt-dusted rim', 'salty'),
+    new Ingredient('Sasher of bacon', 'salty'),
     new Ingredient('Shake of bitters', 'bitter'),
     new Ingredient('Splash of tonic', 'bitter'),
     new Ingredient('Twist of lemon peel', 'bitter'),
@@ -71,5 +107,11 @@ var ingredients = [new Ingredient('Glug of rum', 'strong'),
     new Ingredient('Cherry on top', 'fruity')
 ]
 
-//pantry object
+// pantry object
 var nikkoPantry = new Pantry(ingredients);
+var nikko = new Bartender(questions, nikkoPantry);
+
+// get random number
+function randomNum(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}

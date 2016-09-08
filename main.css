@@ -1,3 +1,26 @@
+h1{
+	font-size: 3rem;
+
+}
+.container-game {
+	text-align: center;
+}
 .questions {
 	display: none;
+}
+.answers > h2{
+	font-size: 19px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+ul {
+	list-style-type: none;
+}
+button{
+	margin-top: 22px;
+	margin-left: 2.5px;
+	margin-right: 2.5px;
+}
+.userDrink > li{
+	margin: 3px;
 }
