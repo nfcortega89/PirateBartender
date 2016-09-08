@@ -1,7 +1,7 @@
 $(function() {
+    // VIEW
     for (var i = 0; i < questions.length; i++) {
-        // clone you stuff
-        // liar variables
+        // clone template for the questions and inputs
         var questionTemplate = $('.questions-template').clone();
         var questionPref = questionTemplate.find('h2').text(questions[i].content);
         $('form').append(questionPref);
@@ -10,8 +10,10 @@ $(function() {
     }
     $('.answers').append("<br><button type='submit'>Submit</button");
     $('.answers').append("<button id='remove'>Clear</button>")
+    // CONTROLLER
     $('.answers').submit(function(e) {
         e.preventDefault();
+        // check to see if the value of the input is "Yes"
         var pref = {
             'strong': $(this).find("input[name='strong']:checked").val() == "Yes",
             'salty': $(this).find("input[name='salty']:checked").val() == "Yes",
@@ -33,34 +35,31 @@ $(function() {
         console.log()
     })
 })
-
+// MODEL
+// Question obj constructor
 function Question(content, preference) {
     this.content = content;
     this.preference = preference;
 };
-
-//  Task: Design an Ingredient object using constructor
+//  Ingredient obj constructor
 function Ingredient(stuff, preference) {
     this.stuff = stuff;
     this.preference = preference;
 }
-
-// Pantry object
+// Pantry obj constructor
 function Pantry(ingredients) {
     this.ingredients = ingredients;
 };
-
+// Bartender obj constructor
 function Bartender(questions, pantry) {
     this.questions = questions;
     this.pantry = pantry;
 }
-
+// give bartender createDrink method
 Bartender.prototype.createDrink = function(prefAnswer) {
-    // this.prefAnswer = prefAnswer;
     var drink = [];
-    // 1. check the preferences (answers)
+    // 1. check the users preferences (answers)
     // 2. if the answer is yes we'll go to the corresponding preference and pick a random ingredient
-    // 3. if the answer is no, move on to the next answer
     for (var key in prefAnswer) {
         if (prefAnswer[key]) {
             var matchedIngredients = []
@@ -69,12 +68,9 @@ Bartender.prototype.createDrink = function(prefAnswer) {
                     matchedIngredients.push(this.pantry.ingredients[i]);
                 }
             }
+            // use function to get random number between 0 & 2
             var num = randomNum(0, 2);
-            // process here.
             drink.push(matchedIngredients[num]);
-            // pick == a random ingredient; from where??
-            // how?
-
         }
     }
     return drink;
@@ -109,7 +105,6 @@ var ingredients = [new Ingredient('Glug of rum', 'strong'),
 
 // pantry object
 var nikkoPantry = new Pantry(ingredients);
-var nikko = new Bartender(questions, nikkoPantry);
 
 // get random number
 function randomNum(min, max) {
